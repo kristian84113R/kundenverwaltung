@@ -6,6 +6,25 @@ Eine Desktop-Anwendung zur Verwaltung von Kunden und Aufträgen für kleine Hand
 ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
 ![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
 
+## 💡 Über dieses Projekt
+
+Dieses Projekt entstand aus einem echten Bedarf: Mein Vater betreibt einen Garten- und Landschaftsbaubetrieb und verwaltete seine Kunden bisher mit Excel-Tabellen und Papierrechnungen. 
+
+Ich habe diese App entwickelt, um ihm eine einfache, offline-fähige Lösung zu bieten, die:
+- Keine Cloud-Anbindung benötigt (Datenschutz!)
+- Bestehende PDF-Rechnungen importieren kann
+- Auch ohne technische Kenntnisse bedienbar ist
+
+**Das Besondere:** Der PDF-Import analysiert automatisch Rechnungen, extrahiert Kundendaten und erstellt direkt Aufträge mit allen Details.
+
+## 🎓 Was ich gelernt habe
+
+- **Electron** - Desktop-Apps mit Web-Technologien bauen
+- **PDF-Parsing** - Text aus PDFs extrahieren und strukturiert verarbeiten
+- **IPC-Kommunikation** - Sichere Brücke zwischen Main- und Renderer-Prozess
+- **Regex & Text-Analyse** - Kundendaten aus unstrukturiertem Text extrahieren
+- **UX Design** - Eine intuitive Oberfläche für nicht-technische Nutzer
+
 ## ✨ Features
 
 ### Kundenverwaltung
