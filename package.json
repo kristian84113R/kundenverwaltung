@@ -1,0 +1,47 @@
+{
+  "name": "kundenapp",
+  "version": "1.0.0",
+  "description": "Kundenverwaltung - Lokale Desktop-Anwendung",
+  "main": "main-electron.js",
+  "author": "Ihr Name",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder --win portable"
+  },
+  "devDependencies": {
+    "electron": "^33.2.0",
+    "electron-builder": "^25.1.8"
+  },
+  "dependencies": {
+    "canvas": "^3.2.0",
+    "pdf-parse": "^2.4.5"
+  },
+  "build": {
+    "appId": "com.kundenapp.desktop",
+    "productName": "Kundenverwaltung",
+    "win": {
+      "target": "portable",
+      "icon": "icon.png",
+      "artifactName": "${productName}.${ext}",
+      "signingHashAlgorithms": [
+        "sha256"
+      ],
+      "signtoolOptions": {
+        "sign": null
+      }
+    },
+    "files": [
+      "**/*",
+      "!node_modules/canvas/build/Release/.deps{,/**/*}",
+      "!**/*.md",
+      "!.git{,/**/*}",
+      "!convert-icon.js",
+      "!seed-data.js",
+      "!sample-customers.json",
+      "!.env"
+    ],
+    "directories": {
+      "output": "dist"
+    }
+  }
+}

@@ -1,0 +1,248 @@
+:root {
+  --primary-color: #007bff;
+  --primary-hover: #0056b3;
+  --bg-color: #f4f7f6;
+  --card-bg: #ffffff;
+  --text-color: #333;
+  --border-color: #ddd;
+  --danger-color: #dc3545;
+  --danger-hover: #a71d2a;
+  --secondary-color: #6c757d;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  margin: 0;
+  padding: 20px;
+  line-height: 1.6;
+}
+
+header {
+  margin-bottom: 2rem;
+}
+
+h1,
+h2,
+h3 {
+  margin-top: 0;
+}
+
+/* --- Buttons --- */
+button {
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.2s;
+}
+
+button:hover {
+  background-color: var(--primary-hover);
+}
+
+button.danger {
+  background-color: var(--danger-color);
+}
+
+button.danger:hover {
+  background-color: var(--danger-hover);
+}
+
+button.secondary {
+  background-color: var(--secondary-color);
+}
+
+button.secondary:hover {
+  background-color: #5a6268;
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* --- Forms --- */
+input[type="text"],
+input[type="email"],
+input[type="tel"],
+input[type="number"],
+input[type="date"],
+input[type="search"],
+textarea,
+select {
+  width: 100%;
+  padding: 0.6rem;
+  margin-bottom: 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+label {
+  display: block;
+  margin-bottom: 0.3rem;
+  font-weight: 600;
+}
+
+.form-row {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-end;
+}
+
+/* --- Layout & Cards --- */
+.card {
+  background-color: var(--card-bg);
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  margin-bottom: 1.5rem;
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1rem;
+}
+
+/* --- Customer List --- */
+.customer-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.customer-card {
+  background: white;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 1.5rem;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.customer-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.customer-card h3 {
+  margin-bottom: 0.5rem;
+  color: var(--primary-color);
+}
+
+.customer-card p {
+  margin: 0;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+/* New Customer Card (Add Button style) */
+.new-customer-card {
+  border: 2px dashed var(--primary-color);
+  background-color: rgba(0, 123, 255, 0.05);
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  min-height: 150px;
+}
+
+.new-customer-card .icon-container {
+  font-size: 3rem;
+  color: var(--primary-color);
+  line-height: 1;
+  margin-bottom: 0.5rem;
+}
+
+.new-customer-card h3 {
+  margin: 0;
+  color: var(--primary-color);
+}
+
+/* --- Header Row --- */
+.header-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.back-button {
+  background: transparent;
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+  padding: 0.4rem 0.8rem;
+}
+
+.back-button:hover {
+  background-color: #e2e6ea;
+  color: var(--text-color);
+}
+
+/* --- Detail Page --- */
+.customer-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.jobs-list {
+  list-style: none;
+  padding: 0;
+}
+
+.jobs-list li {
+  background: #f8f9fa;
+  border-bottom: 1px solid var(--border-color);
+  padding: 0.8rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.jobs-list li:first-child {
+  border-top: 1px solid var(--border-color);
+}
+
+.job-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.photo-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.empty-state {
+  color: #888;
+  font-style: italic;
+}
+
+/* --- Footer --- */
+footer {
+  margin-top: 2rem;
+  text-align: center;
+  color: #888;
+}
+
+a {
+  color: var(--primary-color);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}

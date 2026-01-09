@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kundenverwaltung - Details</title>
+  <link rel="icon" type="image/png" href="./icon.png">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mammoth@1.6.0/mammoth.browser.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&amp;display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 3px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+  </style>
+</head>
+
+<body
+  class="bg-slate-50 text-slate-900 antialiased min-h-screen flex flex-col selection:bg-blue-100 selection:text-blue-700">
+
+  <!-- Top Navigation Bar -->
+  <nav class="sticky top-0 z-10 border-b border-slate-200 bg-white/80 backdrop-blur-md">
+    <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <div class="w-8 h-8 bg-slate-900 rounded-lg flex items-center justify-center text-white">
+          <i data-lucide="users" class="w-4 h-4"></i>
+        </div>
+        <span class="font-medium text-sm tracking-tight">Kundenverwaltung</span>
+      </div>
+
+      <div class="flex items-center gap-4">
+
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="flex-grow max-w-3xl mx-auto w-full px-6 py-10">
+
+    <!-- Breadcrumb / Back Navigation -->
+    <div class="mb-6">
+      <a href="./index.html" id="backToOverviewBtn"
+        class="inline-flex items-center gap-2 text-sm text-slate-500 hover:text-slate-900 transition-colors font-medium">
+        <i data-lucide="arrow-left" class="w-4 h-4"></i>
+        Zurück zur Übersicht
+      </a>
+    </div>
+
+    <!-- Page Header -->
+    <header class="flex flex-col md:flex-row md:items-start justify-between gap-4 mb-8">
+      <div>
+        <h1 class="text-3xl font-semibold tracking-tight text-slate-900">Kundendetails</h1>
+        <p class="text-slate-500 mt-2 text-base">Übersicht aller Informationen und Aufträge für diesen Kunden.</p>
+      </div>
+      <button id="editCustomerBtn"
+        class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-medium text-slate-700 shadow-sm hover:bg-slate-50 hover:text-slate-900 transition-all">
+        <i data-lucide="pencil" class="w-4 h-4"></i>
+        <span>Bearbeiten</span>
+      </button>
+    </header>
+
+    <!-- Main Detail Card -->
+    <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+
+      <!-- Section: Basic Info -->
+      <div class="p-8 border-b border-slate-100">
+        <div class="flex flex-col md:flex-row gap-8 items-start">
+
+          <div class="flex-grow space-y-6">
+            <div>
+              <h2 id="customerName" class="text-2xl font-semibold text-slate-900 tracking-tight">Lade Daten...</h2>
+              <p id="customerJoinedDate" class="text-sm text-slate-500 mt-1">Kunde seit ...</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-y-3 gap-x-8">
+              <div class="flex items-center gap-3 text-sm text-slate-700">
+                <i data-lucide="map-pin" class="w-4 h-4 text-slate-400 shrink-0"></i>
+                <span id="customerAddress">...</span>
+              </div>
+              <div class="flex items-center gap-3 text-sm text-slate-700">
+                <i data-lucide="phone" class="w-4 h-4 text-slate-400 shrink-0"></i>
+                <span id="customerPhone">...</span>
+              </div>
+              <div class="flex items-center gap-3 text-sm text-slate-700">
+                <i data-lucide="mail" class="w-4 h-4 text-slate-400 shrink-0"></i>
+                <a id="customerEmail" href="#" class="hover:text-blue-600 hover:underline">...</a>
+              </div>
+            </div>
+
+            <div class="flex flex-wrap gap-3 pt-2">
+              <button id="openMapsBtn"
+                class="inline-flex items-center gap-2 px-3.5 py-2 bg-blue-50 text-blue-700 rounded-lg text-xs font-medium border border-blue-100 hover:bg-blue-100 hover:border-blue-200 transition-colors">
+                <i data-lucide="map" class="w-3.5 h-3.5"></i>
+                In Google Maps öffnen
+              </button>
+              <button id="deleteCustomerBtn"
+                class="inline-flex items-center gap-2 px-3.5 py-2 bg-red-50 text-red-700 rounded-lg text-xs font-medium border border-red-100 hover:bg-red-100 hover:border-red-200 transition-colors">
+                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                Kunden löschen
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section: Orders (Aufträge) -->
+      <div class="p-8 bg-slate-50/50">
+        <div class="flex items-center justify-between mb-6">
+          <h3 class="text-lg font-semibold text-slate-900">Aufträge</h3>
+          <button id="addOrderBtn"
+            class="inline-flex items-center gap-2 px-4 py-2 bg-slate-900 text-white rounded-lg text-sm font-medium hover:bg-slate-800 transition-colors shadow-sm">
+            <i data-lucide="plus" class="w-4 h-4"></i>
+            Neuen Auftrag anlegen
+          </button>
+        </div>
+
+        <!-- Jobs List -->
+        <div id="jobsList" class="space-y-4 mb-8">
+          <!-- Jobs will be injected here by JS -->
+          <div class="text-center text-slate-400 py-4 italic">Lade Aufträge...</div>
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+
+  <!-- File Preview Modal -->
+  <div id="filePreviewModal"
+    class="fixed inset-0 z-50 hidden bg-slate-900/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white rounded-xl shadow-2xl w-full max-w-5xl h-[85vh] flex flex-col overflow-hidden">
+      <div class="flex items-center justify-between px-4 py-3 border-b border-slate-200 bg-slate-50">
+        <h3 id="previewTitle" class="font-medium text-slate-900 truncate pr-4">Vorschau</h3>
+        <div class="flex items-center gap-2">
+          <button id="openInWordBtn"
+            class="hidden px-3 py-1.5 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors">
+            In Word öffnen
+          </button>
+          <button id="closePreviewBtn"
+            class="p-1 rounded-lg text-slate-500 hover:bg-slate-200 hover:text-slate-700 transition-colors">
+            <i data-lucide="x" class="w-5 h-5"></i>
+          </button>
+        </div>
+      </div>
+      <div class="flex-grow bg-slate-100 relative flex items-center justify-center overflow-hidden">
+        <iframe id="previewFrame" class="w-full h-full hidden"></iframe>
+        <img id="previewImage" class="max-w-full max-h-full object-contain hidden" alt="Vorschau">
+        <div id="previewWord" class="w-full h-full overflow-auto p-8 bg-white hidden">
+          <div id="wordContent" class="max-w-4xl mx-auto prose prose-sm"></div>
+        </div>
+        <div id="previewError" class="hidden text-center p-8">
+          <i data-lucide="file-warning" class="w-12 h-12 text-slate-400 mx-auto mb-3"></i>
+          <p class="text-slate-600">Vorschau nicht verfügbar.</p>
+          <button id="openExternalBtn"
+            class="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700">
+            Extern öffnen
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="./customer-detail.js"></script>
+</body>
+
+</html>

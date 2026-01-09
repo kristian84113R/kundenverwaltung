@@ -1,0 +1,34 @@
+# node
+node_modules/
+npm-debug.log*
+
+# build output
+dist/
+out/
+
+# environment and secrets
+.env
+.env.local
+*.pem
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Test files with personal data
+Rechnung.pdf
+*.pdf
+
+# Logs
+*.log
+logs/
+
+# User data (stored in AppData, not here, but just in case)
+customers.json
+customer_files/
