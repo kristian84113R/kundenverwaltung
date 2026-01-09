@@ -8,9 +8,9 @@ Eine Desktop-Anwendung zur Verwaltung von Kunden und Aufträgen für kleine Hand
 
 ## 💡 Über dieses Projekt
 
-Dieses Projekt entstand aus einem echten Bedarf: Mein Vater betreibt einen Garten- und Landschaftsbaubetrieb und verwaltete seine Kunden bisher mit Excel-Tabellen und Papierrechnungen. 
+Dieses Projekt entstand aus einem echten Bedarf: Mein Vater betreibt einen Garten- und Landschaftsbaubetrieb und hatte bisher keine digitale Lösung zur Kundenverwaltung – alles lief über Papierordner und Gedächtnis.
 
-Ich habe diese App entwickelt, um ihm eine einfache, offline-fähige Lösung zu bieten, die:
+Ich habe diese App entwickelt, um ihm den Einstieg in die Digitalisierung so einfach wie möglich zu machen, mit einer Lösung die:
 - Keine Cloud-Anbindung benötigt (Datenschutz!)
 - Bestehende PDF-Rechnungen importieren kann
 - Auch ohne technische Kenntnisse bedienbar ist
