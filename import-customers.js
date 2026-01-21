@@ -124,9 +124,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
             let statusBadge = '';
             if (customer.error) {
-                statusBadge = `<span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                    <i data-lucide="x-circle" class="w-3 h-3 mr-1"></i>Fehler
-                </span>`;
+                // Make error badge clickable and store full error details
+                const shortError = customer.error.length > 30 ? customer.error.substring(0, 30) + '...' : customer.error;
+                statusBadge = `<button onclick="window.showErrorDetails('${index}')" 
+                    class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800 hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 cursor-pointer" 
+                    title="Klicken für Details">
+                    <i data-lucide="x-circle" class="w-3 h-3 mr-1"></i>Fehler: ${escapeHtml(shortError)}
+                </button>`;
             } else if (customer.isDuplicate) {
                 statusBadge = `<span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
                     <i data-lucide="alert-triangle" class="w-3 h-3 mr-1"></i>Duplikat
@@ -333,4 +337,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Initialize Lucide icons
     if (window.lucide) window.lucide.createIcons();
+
+    // Expose error details viewer globally so the inline onclick works
+    window.showErrorDetails = function (index) {
+        const customer = parsedCustomers[index];
+        if (customer && customer.error) {
+            const message = `Fehler beim Importieren von ${customer.fileName}:\n\n${customer.error}\n\n${customer.stack || ''}`;
+            alert(message);
+        }
+    };
 });

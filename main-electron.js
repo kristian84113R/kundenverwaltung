@@ -189,17 +189,28 @@ ipcMain.handle('select-pdf-files', async () => {
 });
 
 // 8. Parse Invoice PDF (extract customer data from invoice)
-// Using CLI because pdf-parse ESM doesn't work well in Electron's CommonJS context
+// Using pdf-parse v2.x API (class-based)
 ipcMain.handle('parse-invoice-pdf', async (event, filePath) => {
     try {
-        const { execSync } = require('child_process');
+        // pdf-parse v2.x exports PDFParse class
+        const pdfParseMod = require('pdf-parse');
+        const PDFParse = pdfParseMod.PDFParse || pdfParseMod.default?.PDFParse || pdfParseMod;
 
-        // Use npx pdf-parse CLI which works reliably
-        const text = execSync(`npx pdf-parse text "${filePath}"`, {
-            encoding: 'utf-8',
-            maxBuffer: 10 * 1024 * 1024, // 10MB buffer for large PDFs
-            timeout: 30000 // 30 second timeout
-        });
+        if (!PDFParse || typeof PDFParse !== 'function') {
+            console.error('pdf-parse module structure:', Object.keys(pdfParseMod));
+            throw new Error(`pdf-parse PDFParse class not found. Export keys: ${Object.keys(pdfParseMod).join(', ')}`);
+        }
+
+        // Read PDF file
+        const dataBuffer = fs.readFileSync(filePath);
+
+        // Create PDFParse instance with buffer data (v2.x API)
+        const pdf = new PDFParse({ data: dataBuffer });
+        const textResult = await pdf.getText();
+        const text = textResult.text;
+
+        // Clean up resources
+        await pdf.destroy();
 
         // Parse customer data from the recipient block
         const customerData = parseCustomerFromInvoice(text);
@@ -217,7 +228,11 @@ ipcMain.handle('parse-invoice-pdf', async (event, filePath) => {
         };
     } catch (error) {
         console.error('Error parsing invoice PDF:', error);
-        return { success: false, error: error.message };
+        return {
+            success: false,
+            error: error.message,
+            stack: error.stack // Return stack trace for UI debugging
+        };
     }
 });
 
