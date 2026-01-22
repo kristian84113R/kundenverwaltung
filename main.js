@@ -3,6 +3,7 @@
 const customerListEl = document.getElementById("card-grid");
 const searchInput = document.getElementById("searchInput");
 const customerSort = document.getElementById("customerSort");
+const yearFilter = document.getElementById("yearFilter");
 
 // Initial load
 if (customerListEl) {
@@ -24,6 +25,89 @@ if (customerSort) {
   });
 }
 
+// Year filter listener
+if (yearFilter) {
+  yearFilter.addEventListener("change", () => {
+    loadCustomers();
+  });
+}
+
+/**
+ * Extracts year from a date string
+ * @param {string} dateStr - Date in YYYY-MM-DD or DD.MM.YYYY format
+ * @returns {number|null} Year or null if invalid
+ */
+function getYearFromDate(dateStr) {
+  if (!dateStr) return null;
+  // Handle YYYY-MM-DD format
+  if (dateStr.includes('-')) {
+    const year = parseInt(dateStr.split('-')[0]);
+    return isNaN(year) ? null : year;
+  }
+  // Handle DD.MM.YYYY or DD.MM.YY format
+  if (dateStr.includes('.')) {
+    const parts = dateStr.split('.');
+    if (parts.length === 3) {
+      let year = parseInt(parts[2]);
+      if (isNaN(year)) return null;
+      if (year < 100) year += 2000;
+      return year;
+    }
+  }
+  return null;
+}
+
+/**
+ * Gets all years from a customer's jobs
+ * @param {Object} customer - Customer object with jobs array
+ * @returns {Set<number>} Set of years
+ */
+function getCustomerYears(customer) {
+  const years = new Set();
+  if (customer.jobs && Array.isArray(customer.jobs)) {
+    customer.jobs.forEach(job => {
+      const year = getYearFromDate(job.date);
+      if (year) years.add(year);
+    });
+  }
+  return years;
+}
+
+/**
+ * Populates the year filter dropdown with available years
+ * @param {Array} customers - Array of customer objects
+ */
+function populateYearFilter(customers) {
+  if (!yearFilter) return;
+
+  // Collect all years from all customers' jobs
+  const allYears = new Set();
+  customers.forEach(customer => {
+    const customerYears = getCustomerYears(customer);
+    customerYears.forEach(year => allYears.add(year));
+  });
+
+  // Sort years descending (newest first)
+  const sortedYears = Array.from(allYears).sort((a, b) => b - a);
+
+  // Save current selection
+  const currentValue = yearFilter.value;
+
+  // Clear and rebuild options
+  yearFilter.innerHTML = '<option value="">Alle Jahre</option>';
+  sortedYears.forEach(year => {
+    const option = document.createElement('option');
+    option.value = year;
+    option.textContent = year;
+    yearFilter.appendChild(option);
+  });
+
+  // Restore selection if still valid
+  if (currentValue && sortedYears.includes(parseInt(currentValue))) {
+    yearFilter.value = currentValue;
+  }
+}
+
 /**
  * Loads customers from the local JSON file via Electron Bridge.
  */
@@ -34,6 +118,9 @@ export async function loadCustomers() {
   try {
     // Use the Bridge!
     const customers = await window.electronAPI.loadCustomers();
+
+    // Populate year filter with available years
+    populateYearFilter(customers);
 
     customerListEl.innerHTML = "";
 
@@ -53,7 +140,19 @@ export async function loadCustomers() {
     });
     fragments.appendChild(newCustomerBtn);
 
-    if (customers.length === 0) {
+    // Apply year filter
+    const selectedYear = yearFilter ? yearFilter.value : "";
+    let filteredCustomers = customers;
+
+    if (selectedYear) {
+      const yearNum = parseInt(selectedYear);
+      filteredCustomers = customers.filter(customer => {
+        const customerYears = getCustomerYears(customer);
+        return customerYears.has(yearNum);
+      });
+    }
+
+    if (filteredCustomers.length === 0) {
       // Just the "Add" card
       customerListEl.appendChild(fragments);
       lucide.createIcons();
@@ -63,7 +162,7 @@ export async function loadCustomers() {
     // Sort based on dropdown selection
     const sortValue = customerSort ? customerSort.value : "Neueste zuerst";
 
-    customers.sort((a, b) => {
+    filteredCustomers.sort((a, b) => {
       if (sortValue === "Alphabetisch (A-Z)") {
         const nameA = (a.name || "").toLowerCase();
         const nameB = (b.name || "").toLowerCase();
@@ -80,7 +179,7 @@ export async function loadCustomers() {
       }
     });
 
-    customers.forEach((data) => {
+    filteredCustomers.forEach((data) => {
       const card = document.createElement("div");
       card.className = "group bg-white rounded-xl border border-slate-200 p-6 shadow-sm hover:shadow-md hover:border-slate-300 transition-all duration-200 flex flex-col justify-between h-full min-h-[240px] customer-card relative";
       // Store name for search filtering
@@ -209,5 +308,4 @@ function filterCustomers(term) {
     }
   });
 }
-
 
