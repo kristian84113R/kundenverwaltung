@@ -6,6 +6,14 @@ Eine Desktop-Anwendung zur Verwaltung von Kunden und Aufträgen für kleine Hand
 ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
 ![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
 
+[![GitHub Release](https://img.shields.io/github/v/release/kristian84113R/kundenverwaltung?style=for-the-badge)](https://github.com/kristian84113R/kundenverwaltung/releases/latest)
+
+## 📥 Download
+
+**[⬇️ Neueste Version herunterladen](https://github.com/kristian84113R/kundenverwaltung/releases/latest)**
+
+Nach der Erstinstallation aktualisiert sich die App automatisch.
+
 ## 💡 Über dieses Projekt
 
 Dieses Projekt entstand aus einem echten Bedarf: Mein Vater betreibt einen Garten- und Landschaftsbaubetrieb und hatte bisher keine digitale Lösung zur Kundenverwaltung – alles lief über Papierordner und Gedächtnis.
@@ -42,13 +50,19 @@ Ich habe diese App entwickelt, um ihm den Einstieg in die Digitalisierung so ein
 - Extrahiert Kundendaten (Name, Adresse, Ansprechpartner)
 - Extrahiert Auftragsdaten (Datum, Preis, Leistungsbeschreibung)
 - Hängt die Original-PDF automatisch an
-- Duplikaterkennung
+- Intelligente Duplikaterkennung: Bei existierenden Kunden werden neue Aufträge automatisch hinzugefügt
+
+### Automatische Updates 🔄
+- App prüft beim Start auf neue Versionen
+- Updates werden im Hintergrund heruntergeladen
+- Ein-Klick-Installation neuer Versionen
 
 ## 🛠️ Tech Stack
 
 - **Frontend:** HTML, JavaScript, Tailwind CSS
 - **Desktop:** Electron
 - **PDF-Parsing:** pdf-parse
+- **Auto-Updates:** electron-updater + GitHub Releases
 - **Icons:** Lucide Icons
 - **Datenspeicherung:** Lokale JSON-Dateien (keine Cloud/Server nötig)
 
@@ -56,8 +70,8 @@ Ich habe diese App entwickelt, um ihm den Einstieg in die Digitalisierung so ein
 
 ```bash
 # Repository klonen
-git clone https://github.com/[username]/kundenapp.git
-cd kundenapp
+git clone https://github.com/kristian84113R/kundenverwaltung.git
+cd kundenverwaltung
 
 # Abhängigkeiten installieren
 npm install
@@ -74,7 +88,19 @@ Windows-Installer erstellen:
 npm run build
 ```
 
-Die `.exe` Datei wird im `dist/` Ordner erstellt.
+Die Setup-Datei wird im `dist/` Ordner erstellt.
+
+### Release veröffentlichen
+
+```bash
+# GitHub Token als Umgebungsvariable setzen
+set GH_TOKEN=dein_github_token
+
+# Version in package.json erhöhen, dann:
+npm run release
+```
+
+Dies erstellt automatisch ein GitHub Release mit Installer und Auto-Update-Dateien.
 
 ## 🧪 Tests
 
@@ -122,7 +148,6 @@ Keine Cloud-Anbindung, keine externen Server - die Daten bleiben auf dem Rechner
 - [ ] Umsatz-Statistiken Dashboard
 - [ ] Rechnungen erstellen & PDF-Export
 - [ ] Kalender für Terminplanung
-- [ ] Automatische Updates
 
 ## 📄 Lizenz
 

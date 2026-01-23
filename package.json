@@ -1,12 +1,18 @@
 {
   "name": "kundenapp",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Kundenverwaltung - Lokale Desktop-Anwendung",
   "main": "main-electron.js",
-  "author": "Ihr Name",
+  "author": "Kristian",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kristian84113R/kundenverwaltung.git"
+  },
   "scripts": {
     "start": "electron .",
-    "build": "electron-builder --win portable"
+    "build": "electron-builder --win",
+    "build:portable": "electron-builder --win portable",
+    "release": "electron-builder --win --publish always"
   },
   "devDependencies": {
     "electron": "^33.2.0",
@@ -14,21 +20,26 @@
   },
   "dependencies": {
     "canvas": "^3.2.0",
+    "electron-updater": "^6.7.3",
     "pdf-parse": "^2.4.5"
   },
   "build": {
     "appId": "com.kundenapp.desktop",
     "productName": "Kundenverwaltung",
+    "publish": {
+      "provider": "github",
+      "owner": "kristian84113R",
+      "repo": "kundenverwaltung"
+    },
     "win": {
-      "target": "portable",
+      "target": "nsis",
       "icon": "icon.png",
-      "artifactName": "${productName}.${ext}",
-      "signingHashAlgorithms": [
-        "sha256"
-      ],
-      "signtoolOptions": {
-        "sign": null
-      }
+      "artifactName": "${productName}-Setup-${version}.${ext}"
+    },
+    "nsis": {
+      "oneClick": true,
+      "allowToChangeInstallationDirectory": false,
+      "deleteAppDataOnUninstall": false
     },
     "asarUnpack": [
       "**/node_modules/pdf-parse/**/*",

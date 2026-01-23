@@ -82,7 +82,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         fileName: parseResult.fileName,
                         filePath: parseResult.filePath,
                         isDuplicate: isDuplicate,
-                        selected: !isDuplicate // Pre-select non-duplicates
+                        selected: true // Pre-select all (duplicates now add jobs to existing customer)
                     });
                 } else {
                     parsedCustomers.push({
@@ -120,24 +120,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
         parsedCustomers.forEach((customer, index) => {
             const row = document.createElement('tr');
-            row.className = customer.isDuplicate ? 'bg-amber-50' : '';
+            row.className = customer.isDuplicate ? 'bg-blue-50' : '';
 
             let statusBadge = '';
             if (customer.error) {
                 // Make error badge clickable and store full error details
                 const shortError = customer.error.length > 30 ? customer.error.substring(0, 30) + '...' : customer.error;
-                statusBadge = `<button onclick="window.showErrorDetails('${index}')" 
-                    class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800 hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 cursor-pointer" 
+                statusBadge = `<button onclick="window.showErrorDetails('${index}')"
+                    class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800 hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 cursor-pointer"
                     title="Klicken für Details">
                     <i data-lucide="x-circle" class="w-3 h-3 mr-1"></i>Fehler: ${escapeHtml(shortError)}
                 </button>`;
             } else if (customer.isDuplicate) {
-                statusBadge = `<span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
-                    <i data-lucide="alert-triangle" class="w-3 h-3 mr-1"></i>Duplikat
+                statusBadge = `<span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                    <i data-lucide="plus-circle" class="w-3 h-3 mr-1"></i>Auftrag hinzufügen
                 </span>`;
             } else {
                 statusBadge = `<span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                    <i data-lucide="check-circle" class="w-3 h-3 mr-1"></i>Neu
+                    <i data-lucide="check-circle" class="w-3 h-3 mr-1"></i>Neuer Kunde
                 </span>`;
             }
 
@@ -241,32 +241,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (toImport.length === 0) return;
 
-        let successCount = 0;
-        let skipCount = 0;
+        let newCustomerCount = 0;
+        let jobsAddedCount = 0;
 
         for (const customer of toImport) {
-            // Double-check for duplicates (in case new customers were added)
-            const customers = await window.electronAPI.loadCustomers();
-            const existingNames = new Set(customers.map(c => c.name.toLowerCase().trim()));
-
-            if (existingNames.has(customer.name.toLowerCase().trim())) {
-                skipCount++;
-                continue;
-            }
-
-            const newCustomer = {
-                id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
-                name: customer.name,
-                location: customer.location,
-                phone: customer.phone,
-                email: customer.email,
-                createdAt: new Date().toISOString(),
-                photos: [],
-                jobs: []
-            };
-
             try {
-                // Copy PDF to storage
+                // Copy PDF to storage first
                 let pdfFile = null;
                 if (customer.filePath && customer.fileName) {
                     const copyResult = await window.electronAPI.copyPdfToStorage({
@@ -283,23 +263,48 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 // Create job from invoice data
-                if (customer.job) {
-                    const job = {
-                        date: customer.job.date || new Date().toISOString().slice(0, 10),
-                        description: customer.job.description || 'Importierte Rechnung',
-                        price: customer.job.price,
-                        files: pdfFile ? [pdfFile] : [],
-                        pdfUrl: null,
-                        pdfLabel: null
+                const job = customer.job ? {
+                    date: customer.job.date || new Date().toISOString().slice(0, 10),
+                    description: customer.job.description || 'Importierte Rechnung',
+                    price: customer.job.price,
+                    files: pdfFile ? [pdfFile] : [],
+                    pdfUrl: null,
+                    pdfLabel: null
+                } : null;
+
+                // Check if customer already exists
+                const customers = await window.electronAPI.loadCustomers();
+                const existingCustomer = customers.find(
+                    c => c.name.toLowerCase().trim() === customer.name.toLowerCase().trim()
+                );
+
+                if (existingCustomer) {
+                    // Add job to existing customer
+                    if (job) {
+                        existingCustomer.jobs = existingCustomer.jobs || [];
+                        existingCustomer.jobs.push(job);
+                        await window.electronAPI.saveCustomer(existingCustomer);
+                        jobsAddedCount++;
+                    }
+                } else {
+                    // Create new customer
+                    const newCustomer = {
+                        id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
+                        name: customer.name,
+                        location: customer.location,
+                        phone: customer.phone,
+                        email: customer.email,
+                        createdAt: new Date().toISOString(),
+                        photos: [],
+                        jobs: job ? [job] : []
                     };
-                    newCustomer.jobs.push(job);
+
+                    await window.electronAPI.saveCustomer(newCustomer);
+                    newCustomerCount++;
+
+                    // Update existing names set
+                    existingCustomerNames.add(customer.name.toLowerCase().trim());
                 }
-
-                await window.electronAPI.saveCustomer(newCustomer);
-                successCount++;
-
-                // Update existing names set
-                existingCustomerNames.add(customer.name.toLowerCase().trim());
 
                 // Small delay to ensure unique IDs
                 await new Promise(resolve => setTimeout(resolve, 10));
@@ -309,11 +314,17 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // Show appropriate toast
-        if (skipCount > 0) {
-            warningMessage.textContent = `${successCount} Kunde${successCount !== 1 ? 'n' : ''} importiert, ${skipCount} Duplikat${skipCount !== 1 ? 'e' : ''} übersprungen.`;
-            showToast(warningToast);
-        } else {
-            successMessage.textContent = `${successCount} Kunde${successCount !== 1 ? 'n' : ''} erfolgreich importiert!`;
+        let message = '';
+        if (newCustomerCount > 0 && jobsAddedCount > 0) {
+            message = `${newCustomerCount} neue${newCustomerCount === 1 ? 'r' : ''} Kunde${newCustomerCount !== 1 ? 'n' : ''}, ${jobsAddedCount} Auftrag${jobsAddedCount !== 1 ? 'e' : ''} zu bestehenden Kunden hinzugefügt.`;
+        } else if (newCustomerCount > 0) {
+            message = `${newCustomerCount} Kunde${newCustomerCount !== 1 ? 'n' : ''} erfolgreich importiert!`;
+        } else if (jobsAddedCount > 0) {
+            message = `${jobsAddedCount} Auftrag${jobsAddedCount !== 1 ? 'e' : ''} zu bestehenden Kunden hinzugefügt.`;
+        }
+
+        if (message) {
+            successMessage.textContent = message;
             showToast(successToast);
         }
 

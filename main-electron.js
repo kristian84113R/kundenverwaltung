@@ -3,8 +3,13 @@
  * Handles window creation, IPC communication, and file system operations
  */
 const { app, BrowserWindow, ipcMain, dialog, shell } = require('electron');
+const { autoUpdater } = require('electron-updater');
 const path = require('path');
 const fs = require('fs');
+
+// Configure auto-updater
+autoUpdater.autoDownload = true;
+autoUpdater.autoInstallOnAppQuit = true;
 
 // Define paths for data storage
 const DATA_FILE = path.join(app.getPath('userData'), 'customers.json');
@@ -38,11 +43,56 @@ function createWindow() {
 app.whenReady().then(() => {
     createWindow();
 
+    // Check for updates after window is ready (only in production)
+    if (app.isPackaged) {
+        autoUpdater.checkForUpdatesAndNotify();
+    }
+
     app.on('activate', () => {
         if (BrowserWindow.getAllWindows().length === 0) {
             createWindow();
         }
     });
+});
+
+// --- Auto-Updater Events ---
+autoUpdater.on('checking-for-update', () => {
+    console.log('Checking for updates...');
+});
+
+autoUpdater.on('update-available', (info) => {
+    console.log('Update available:', info.version);
+});
+
+autoUpdater.on('update-not-available', () => {
+    console.log('App is up to date.');
+});
+
+autoUpdater.on('download-progress', (progress) => {
+    console.log(`Download progress: ${Math.round(progress.percent)}%`);
+});
+
+autoUpdater.on('update-downloaded', (info) => {
+    console.log('Update downloaded:', info.version);
+    // Show notification to user
+    const win = BrowserWindow.getAllWindows()[0];
+    if (win) {
+        dialog.showMessageBox(win, {
+            type: 'info',
+            title: 'Update verfügbar',
+            message: `Version ${info.version} wurde heruntergeladen.`,
+            detail: 'Das Update wird beim nächsten Neustart installiert.',
+            buttons: ['Jetzt neustarten', 'Später']
+        }).then((result) => {
+            if (result.response === 0) {
+                autoUpdater.quitAndInstall();
+            }
+        });
+    }
+});
+
+autoUpdater.on('error', (err) => {
+    console.error('Auto-updater error:', err);
 });
 
 app.on('window-all-closed', () => {
